@@ -4,13 +4,13 @@
 
 **API -> https://app.clickup.com/v1/login?include_teams=true**
 
-1. Go https://www.base64decode.org/, and click the encode option to encode your email and password. For example, `username@gmail.com:password`.
+1. Go https://www.base64decode.org/, and click the encode option to encode your email and password(ClickUp email and password). For example, `username@gmail.com:password`.
 
 2. When you get the encoded email and password, i.e `dXNlcm5hbWVAZ21haWwuY29tOnBhc3N3b3Jk`. Add `Basic` in front of the token. For example, `Basic dXNlcm5hbWVAZ21haWwuY29tOnBhc3N3b3Jk`.
 
 3. `POST` Request to API with a basic token above. `{Authorization: Basic dXNlcm5hbWVAZ21haWwuY29tOnBhc3N3b3Jk}` as a header.
 
-4. After step 3, you can get the `token` which is `Bearer ejasdhjasjkdyasjkdhjbasdas.asjlkdhasjkdhjkasdhjkasndjaskas`.
+4. After step 3, you will get a json. Inside the json object you find `token` which is `Bearer ejasdhjasjkdyasjkdhjbasdas.asjlkdhasjkdhjkasdhjkasndjaskas`.
 
 ## API for getting all docs
 
@@ -18,8 +18,18 @@
 
 1. When requesting this API, make sure you add `{Authorization: Bearer ejasdhjasjkdyasjkdhjbasdas.asjlkdhasjkdhjkasdhjkasndjaskas}` as a header.
 
-Get access token: https://app.clickup.com/api/v2/oauth/token?client_id={}&client_secret={}&code={}
+## Get access token:
 
-Get team id: https://api.clickup.com/api/v2/team
+**API -> https://app.clickup.com/api/v2/oauth/token?client_id={}&client_secret={}&code={}**
 
-Get user id: https://api.clickup.com/api/v2/user
+1. [Click to open docs][access_token]
+
+## Get team id
+
+**API -> https://api.clickup.com/api/v2/team**
+
+## Get user id
+
+**API -> https://api.clickup.com/api/v2/user**
+
+[access_token]: https://jsapi.apiary.io/apis/clickup20/introduction/authentication/oauth2-flow.html
