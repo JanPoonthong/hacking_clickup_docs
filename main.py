@@ -15,9 +15,11 @@ response = requests.get(
     headers=headers,
 )
 
-data = response.json()["views"]
+data = response.json()
+data_view = response.json()["views"]
 
+# for i in range(len(data_view)):
+#     print(data_view[i]["pages"][0]["name"])
+#     print(data_view[i]["pages"][0]["text_content"])
 
-for i in range(len(data)):
-    print(data[i]["pages"][0]["name"])
-    print(data[i]["pages"][0]["text_content"])
+print(data_view[0]["pages"][2])
