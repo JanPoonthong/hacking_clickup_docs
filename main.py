@@ -11,19 +11,18 @@ response = requests.get(
     headers=headers,
 )
 
-data = response.json()
-data_view = response.json()["views"]
-
-for i in range(len(data_view)):
-    print(f"Big folder: {data_view[i]['name']}")
-    num_data_view_page = len(data_view[i]["pages"])
-    for j in range(num_data_view_page):
-        if data_view[i]['pages'][j]['parent'] != None:
-            print(f"\t{data_view[i]['pages'][j]['name']} has parent")
-            print(f"\tName: {data_view[i]['pages'][j]['name']}")
-            print(f"\tDescription: {data_view[i]['pages'][j]['text_content']}")
+for i in response.json()["views"]:
+    print(f"Big folder: {i['name']}")
+    for j in i["pages"]:
+        if j["parent"] != None:
+            for k in i["pages"]:
+                if j["parent"] == k["id"]:
+                    print(True)
+            print(f"\t{j['name']} has parent")
+            print(f"\tName: {j['name']}")
+            print(f"\tDescription: {j['text_content']}")
             print("")
         else:
-            print(f"\tName: {data_view[i]['pages'][j]['name']}")
-            print(f"\tDescription: {data_view[i]['pages'][j]['text_content']}")
+            print(f"\tName: {j['name']}")
+            print(f"\tDescription: {j['text_content']}")
             print("")
