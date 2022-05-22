@@ -16,12 +16,9 @@ response = requests.get(
 )
 
 for i in response.json()["views"]:
-    print(f"Big folder: {i['name']}")
     try:
         os.mkdir(f"{i['name']}")
-        print("Directory ", f"{i['name']}", " Created ")
     except FileExistsError:
-        print("Directory ", f"{i['name']}", " already exists")
 
 for i in response.json()["views"]:
     os.chdir(i["name"])
