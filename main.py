@@ -19,6 +19,7 @@ for i in response.json()["views"]:
     try:
         os.mkdir(f"{i['name']}")
     except FileExistsError:
+        print("Directory ", f"{i['name']}", " already exists")
 
 for i in response.json()["views"]:
     os.chdir(i["name"])
