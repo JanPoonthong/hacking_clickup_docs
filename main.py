@@ -28,11 +28,15 @@ def get_docs():
 
 
 def create_folder():
-    for i in get_docs().json()["views"]:
-        try:
-            os.mkdir(f"{i['name']}")
-        except FileExistsError:
-            print("Directory ", f"{i['name']}", " already exists")
+    try:
+        for i in get_docs().json()["views"]:
+            try:
+                os.mkdir(f"{i['name']}")
+                print("Created ", f"{i['name']}")
+            except FileExistsError:
+                print("Directory ", f"{i['name']}", " already exists")
+    except KeyError:
+        print("Bearer token expired")
 
 
 def save_docs_db(title, description):
@@ -43,7 +47,21 @@ def save_docs_db(title, description):
     con.commit()
 
 
+def delete_db():
+    cur.execute("DELETE FROM docs;")
+
+
+def check_duplicate():
+    cur.execute("SELECT * FROM docs")
+
+    rows = cur.fetchall()
+
+    for row in rows:
+        print(row)
+
+
 def create_pdf():
+    delete_db()
     for i in get_docs().json()["views"]:
         os.chdir(i["name"])
         for j in i["pages"]:
@@ -55,13 +73,13 @@ def create_pdf():
             my_canvas.drawString(100, 730, f"Description: {j['text_content']}")
             my_canvas.save()
         os.chdir("../")
-    print("Create PDF")
-    con.close()
+    print("Update PDF")
 
 
 def main():
     create_folder()
     create_pdf()
+    con.close()
 
 
 main()
