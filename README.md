@@ -1,5 +1,23 @@
 # Hacking ClickUp Docs
 
+## Requirements
+
+### Linux / macOS / Windows
+
+Prerequisites:
+
+- [Python][python-download]
+
+Instructions:
+
+1.  Download requests:
+
+        $ pip install requests
+
+2.  Download reportlab:
+
+        $ pip install reportlab
+
 ## API for login in and can also get bearer authorization key
 
 **API -> https://app.clickup.com/v1/login?include_teams=true**
@@ -33,3 +51,4 @@
 **API -> https://api.clickup.com/api/v2/user**
 
 [access_token]: https://jsapi.apiary.io/apis/clickup20/introduction/authentication/oauth2-flow.html
+[python-download]: https://www.python.org/downloads/
