@@ -1,8 +1,17 @@
 import os
-import requests
 import config
+import sqlite3
+import requests
 
 from reportlab.pdfgen import canvas
+
+con = sqlite3.connect("document.db")
+cur = con.cursor()
+
+try:
+    cur.execute("""CREATE TABLE docs (title text, description text)""")
+except sqlite3.OperationalError:
+    pass
 
 
 def get_docs():
@@ -26,10 +35,19 @@ def create_folder():
             print("Directory ", f"{i['name']}", " already exists")
 
 
+def save_docs_db(title, description):
+    cur.execute(
+        "INSERT INTO docs VALUES (?, ?)".format(title.replace('"', '""')),
+        (title, description),
+    )
+    con.commit()
+
+
 def create_pdf():
     for i in get_docs().json()["views"]:
         os.chdir(i["name"])
         for j in i["pages"]:
+            save_docs_db(j["name"], j["text_content"])
             my_canvas = canvas.Canvas(f"{j['name']}.pdf")
             my_canvas.setFont("Helvetica", 20)
             my_canvas.drawString(100, 750, f"Title: {j['name']}")
@@ -38,6 +56,7 @@ def create_pdf():
             my_canvas.save()
         os.chdir("../")
     print("Create PDF")
+    con.close()
 
 
 def main():
