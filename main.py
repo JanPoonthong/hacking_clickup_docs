@@ -20,23 +20,24 @@ def get_docs():
         "Content-Type": "application/json",
     }
 
-    response = requests.get(
-        "https://app.clickup.com/docs/v1/team/36742991/docs?include_archived=false&search=&page_search=&dir=desc&section=all",
-        headers=headers,
-    )
+    try:
+        response = requests.get(
+            "https://app.clickup.com/docs/v1/team/36742991/docs?include_archived=false&search=&page_search=&dir=desc&section=all",
+            headers=headers,
+        )
+    except requests.exceptions.HTTPError:
+        raise SystemExit("Bearer token expired")
+
     return response
 
 
 def create_folder():
-    try:
-        for i in get_docs().json()["views"]:
-            try:
-                os.mkdir(f"{i['name']}")
-                print("Created ", f"{i['name']}")
-            except FileExistsError:
-                print("Directory ", f"{i['name']}", " already exists")
-    except KeyError:
-        print("Bearer token expired")
+    for i in get_docs().json()["views"]:
+        try:
+            os.mkdir(f"{i['name']}")
+            print("Created ", f"{i['name']}")
+        except FileExistsError:
+            print("Directory ", f"{i['name']}", " already exists")
 
 
 def save_docs_db(title, description):
