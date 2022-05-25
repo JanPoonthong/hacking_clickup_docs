@@ -97,22 +97,18 @@ def create_pdf():
 
 
 def zoho_token():
-    access_token = requests.post(
-        "https://accounts.zoho.com/oauth/v2/token?refresh_token={config.zoho_refresh_token}&client_secret={config.zoho_client_secret}&grant_type=refresh_token&client_id={config.zoho_client_id}"
-    )["access_token"]
-    return access_token
+    url = "https://accounts.zoho.com/oauth/v2/token?refresh_token={config.zoho_refresh_token}&client_secret={config.zoho_client_secret}&grant_type=refresh_token&client_id={config.zoho_client_id}"
+    access_token = requests.post(url)
+    return access_token["access_token"]
 
 
 def save_zoho_drive():
+    url = "https://www.zohoapis.com/workdrive/api/v1/upload?parent_id=hltaja4afd79bedb04e93bcede5e7e897802f&override-name-exist=true"
     for path in Path("./").rglob("*.pdf"):
         files = {"content": open(f"{path}", "rb")}
         headers = {"Authorization": f"Zoho-oauthtoken {config.file_zoho_token}"}
-        response = requests.post(
-            "https://www.zohoapis.com/workdrive/api/v1/upload?parent_id=hltaja4afd79bedb04e93bcede5e7e897802f",
-            files=files,
-            headers=headers,
-        )
-        print(response)
+        response = requests.post(url, files=files, headers=headers)
+        print(response.json())
 
 
 def main():
