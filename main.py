@@ -3,6 +3,8 @@ import glob
 import config
 import sqlite3
 import requests
+import textwrap
+
 from pathlib import Path
 
 
@@ -64,6 +66,18 @@ def check_duplicate():
         print(row)
 
 
+def draw_wrapped_line(canvas, text, length, x_pos, y_pos, y_offset):
+    if len(text) > length:
+        wraps = textwrap.wrap(text, length)
+        for x in range(len(wraps)):
+            canvas.drawString(x_pos, y_pos, wraps[x])
+            y_pos -= y_offset
+        y_pos += y_offset
+    else:
+        canvas.drawString(x_pos, y_pos, text)
+    return y_pos
+
+
 def create_pdf():
     delete_db()
     for i in get_docs().json()["views"]:
@@ -72,28 +86,38 @@ def create_pdf():
             save_docs_db(j["name"], j["text_content"])
             my_canvas = canvas.Canvas(f"{j['name']}.pdf")
             my_canvas.setFont("Helvetica", 20)
-            my_canvas.drawString(100, 750, f"Title: {j['name']}")
+            my_canvas.drawString(100, 750, f"{j['name']}")
             my_canvas.setFont("Helvetica", 12)
-            my_canvas.drawString(100, 730, f"Description: {j['text_content']}")
+            draw_wrapped_line(
+                my_canvas, f"{j['text_content']}", 80, 100, 730, 15
+            )
             my_canvas.save()
         os.chdir("../")
     print("Update PDF")
 
 
+def zoho_token():
+    access_token = requests.post(
+        "https://accounts.zoho.com/oauth/v2/token?refresh_token={config.zoho_refresh_token}&client_secret={config.zoho_client_secret}&grant_type=refresh_token&client_id={config.zoho_client_id}"
+    )["access_token"]
+    return access_token
+
+
 def save_zoho_drive():
     for path in Path("./").rglob("*.pdf"):
-        files = {"upload_file": open(f"{path.name}", "rb")}
+        files = {"content": open(f"{path}", "rb")}
         headers = {"Authorization": f"Zoho-oauthtoken {config.file_zoho_token}"}
-        requests.post(
+        response = requests.post(
             "https://www.zohoapis.com/workdrive/api/v1/upload?parent_id=hltaja4afd79bedb04e93bcede5e7e897802f",
             files=files,
             headers=headers,
         )
+        print(response)
 
 
 def main():
-    # create_folder()
-    # create_pdf()
+    create_folder()
+    create_pdf()
     save_zoho_drive()
     # con.close()
 
