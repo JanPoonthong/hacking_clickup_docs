@@ -1,7 +1,10 @@
 import os
+import glob
 import config
 import sqlite3
 import requests
+from pathlib import Path
+
 
 from reportlab.pdfgen import canvas
 
@@ -77,10 +80,22 @@ def create_pdf():
     print("Update PDF")
 
 
+def save_zoho_drive():
+    for path in Path("./").rglob("*.pdf"):
+        files = {"upload_file": open(f"{path.name}", "rb")}
+        headers = {"Authorization": f"Zoho-oauthtoken {config.file_zoho_token}"}
+        requests.post(
+            "https://www.zohoapis.com/workdrive/api/v1/upload?parent_id=hltaja4afd79bedb04e93bcede5e7e897802f",
+            files=files,
+            headers=headers,
+        )
+
+
 def main():
-    create_folder()
-    create_pdf()
-    con.close()
+    # create_folder()
+    # create_pdf()
+    save_zoho_drive()
+    # con.close()
 
 
 main()
