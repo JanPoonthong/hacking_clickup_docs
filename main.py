@@ -10,6 +10,11 @@ from pathlib import Path
 
 from reportlab.pdfgen import canvas
 
+headers = {
+    "Authorization": f"Bearer {config.auth_token}",
+    "Content-Type": "application/json",
+}
+
 con = sqlite3.connect("document.db")
 cur = con.cursor()
 
@@ -20,11 +25,6 @@ except sqlite3.OperationalError:
 
 
 def get_docs():
-    headers = {
-        "Authorization": f"Bearer {config.auth_token}",
-        "Content-Type": "application/json",
-    }
-
     try:
         response = requests.get(
             "https://app.clickup.com/docs/v1/team/36742991/docs?include_archived=false&search=&page_search=&dir=desc&section=all",
@@ -108,14 +108,101 @@ def save_zoho_drive():
         files = {"content": open(f"{path}", "rb")}
         headers = {"Authorization": f"Zoho-oauthtoken {config.file_zoho_token}"}
         response = requests.post(url, files=files, headers=headers)
-        print(response.json())
+        # print(response.json())
+
+
+def create_docs_clickup():
+    url = "https://app.clickup.com/v1/view"
+    raw_data = """{
+    "visibility": 1,
+    "me_view": false,
+    "id": "",
+    "parent": {
+        "id": 36742991,
+        "type": 7
+    },
+    "grouping": {},
+    "divide": {},
+    "settings": {
+        "show_task_locations": false,
+        "show_timer": false,
+        "show_subtasks": 1,
+        "show_subtask_parent_names": false,
+        "me_comments": true,
+        "me_subtasks": true,
+        "me_checklists": true,
+        "show_closed_subtasks": false,
+        "show_task_ids": false,
+        "show_empty_statuses": false,
+        "time_in_status_view": 1,
+        "auto_wrap": false
+    },
+    "members": [],
+    "group_members": [],
+    "sorting": {
+        "fields": []
+    },
+    "filters": {
+        "show_closed": false,
+        "search_custom_fields": false,
+        "search_description": false,
+        "fields": []
+    },
+    "columns": {
+        "fields": [
+            {
+                "field": "assignee",
+                "pinned": true,
+                "hidden": false
+            },
+            {
+                "field": "dueDate",
+                "pinned": false,
+                "hidden": false
+            },
+            {
+                "field": "priority",
+                "pinned": false,
+                "hidden": false
+            }
+        ]
+    },
+    "permissions": {
+        "edit_view": true,
+        "delete_view": true,
+        "can_unprotect": true,
+        "comment": true
+    },
+    "auto_save": false,
+    "board_settings": {},
+    "name": "Doc",
+    "type": 9,
+    "standard_view": false,
+    "create_page": true,
+    "user_filter_settings": true
+}"""
+    response = requests.post(url, headers=headers, data=raw_data)
+    data = response.json()["view"]
+    put_text_to_docs(data["pages"][0]["view_id"], data["pages"][0]["id"])
+
+
+def title_and_description(title, description):
+    return {f"""{{"name": "{title}"}}""", f"""{{"content": "{description}"}}"""}
+
+
+def put_text_to_docs(view_id, id):
+    url = f"https://app.clickup.com/docs/v1/view/{view_id}/page/{id}?all_pages=false"
+    for i in title_and_description("strager is my dad", "I don't have a mom"):
+        response = requests.put(url, data=i, headers=headers)
+        # print(response.json())
 
 
 def main():
+    # create_docs_clickup()
     create_folder()
     create_pdf()
-    save_zoho_drive()
-    # con.close()
+    # save_zoho_drive()
+    con.close()
 
 
 main()
