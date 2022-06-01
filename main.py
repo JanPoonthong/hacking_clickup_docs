@@ -1,14 +1,12 @@
-import os
 import glob
-import config
-import sqlite3
+import os
 import requests
+import sqlite3
 import textwrap
-
 from pathlib import Path
-
-
 from reportlab.pdfgen import canvas
+
+import config
 
 headers = {
     "Authorization": f"Bearer {config.auth_token}",

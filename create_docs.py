@@ -1,8 +1,8 @@
-import requests
-import config
-
-import sys
 import argparse
+import requests
+import sys
+
+import config
 
 headers = {
     "Authorization": f"Bearer {config.auth_token}",
