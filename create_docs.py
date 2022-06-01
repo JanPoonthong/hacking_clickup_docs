@@ -2,6 +2,7 @@ import requests
 import config
 
 import sys
+import argparse
 
 headers = {
     "Authorization": f"Bearer {config.auth_token}",
@@ -97,23 +98,12 @@ def put_text_to_docs(title, description, view_id, id):
 
 
 if __name__ == "__main__":
-    # print(sys.argv)
-    if (
-        len(sys.argv) >= 3
-        and "title:" in sys.argv
-        and "description:" in sys.argv
-    ):
-        pass
-        # create_docs_clickup(sys.argv[1], sys.argv[2])
-    else:
-        print(
-            'Argument should be atleast 2, "python create_docs.py title: <the title> description: <the description>"'
-        )
-        sys.exit(1)
-
-    title = []
-    for k in sys.argv[2:]:
-        if k == "description:":
-            break
-        title.append(k)
-    print(title)
+    parser = argparse.ArgumentParser(
+        description="This is a script for creating docs in ClickUp.com"
+    )
+    parser.add_argument("--title", type=str, help="Type your title of the docs")
+    parser.add_argument(
+        "--description", type=str, help="Type your description of the docs"
+    )
+    args = parser.parse_args()
+    create_docs_clickup(args.title, args.description)
