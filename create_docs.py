@@ -87,14 +87,18 @@ def create_docs_clickup(title, description):
 
 
 def title_and_description(title, description):
-    return {f"""{{"name": "{title}"}}""", f"""{{"content": "{description}"}}"""}
+    return {
+        f"""{{"name": "{title}"}}""",
+        f"""{{"text_content": "{description}"}}""",
+        f"""{{"content": "{description}"}}""",
+    }
 
 
 def put_text_to_docs(title, description, view_id, id):
     url = f"https://app.clickup.com/docs/v1/view/{view_id}/page/{id}?all_pages=false"
     for i in title_and_description(f"{title}", f"{description}"):
         response = requests.put(url, data=i, headers=headers)
-        print(response)
+        print(response.json())
 
 
 if __name__ == "__main__":

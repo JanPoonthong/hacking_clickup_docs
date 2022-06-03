@@ -106,14 +106,13 @@ def save_zoho_drive():
         files = {"content": open(f"{path}", "rb")}
         headers = {"Authorization": f"Zoho-oauthtoken {config.file_zoho_token}"}
         response = requests.post(url, files=files, headers=headers)
-        # print(response.json())
+        print(response.json())
 
 
 def main():
-    # create_docs_clickup()
     create_folder()
     create_pdf()
-    # save_zoho_drive()
+    save_zoho_drive()
     con.close()
 
 
