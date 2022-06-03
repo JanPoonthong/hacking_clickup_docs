@@ -14,10 +14,6 @@ Instructions:
 
         $ pip install requests
 
-2.  Download reportlab:
-
-        $ pip install reportlab
-
 ## API for login in and can also get bearer authorization key
 
 **API -> https://app.clickup.com/v1/login?include_teams=true**
