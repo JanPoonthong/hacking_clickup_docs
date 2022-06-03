@@ -14,6 +14,15 @@ Instructions:
 
         $ pip install requests
 
+## Create doc in ClickUp
+
+Instructions:
+
+1.  Run:
+
+        $ python3 create_docs.py --title "Your Title" --description "Your Description"
+
+
 ## API for login in and can also get bearer authorization key
 
 **API -> https://app.clickup.com/v1/login?include_teams=true**
