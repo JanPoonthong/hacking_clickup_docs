@@ -109,7 +109,6 @@ def put_text_to_docs(title, description, view_id, id):
             ),
         }
     )
-    print(payload)
     response = requests.put(url, data=payload, headers=headers)
     print(response.json())
 
