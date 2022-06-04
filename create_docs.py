@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import requests
 import sys
 
@@ -88,19 +89,29 @@ def create_docs_clickup(title, description):
     put_text_to_docs(title, description, page["view_id"], page["id"])
 
 
-def title_and_description(title, description):
-    return {
-        f"""{{"name": "{title}"}}""",
-        f"""{{"text_content": "{description}"}}""",
-        f"""{{"content": "{description}"}}""",
-    }
-
-
 def put_text_to_docs(title, description, view_id, id):
     url = f"https://app.clickup.com/docs/v1/view/{view_id}/page/{id}?all_pages=false"
-    for i in title_and_description(f"{title}", f"{description}"):
-        response = requests.put(url, data=i, headers=headers)
-        print(response.json())
+    payload = json.dumps(
+        {
+            "name": f"{title}",
+            "content": json.dumps(
+                {
+                    "ops": [
+                        {"insert": f"{description}"},
+                        {
+                            "insert": "\n",
+                            "attributes": {
+                                "block-id": "block-279da377-da16-4281-ab40-b75a9b1ae183"
+                            },
+                        },
+                    ]
+                }
+            ),
+        }
+    )
+    print(payload)
+    response = requests.put(url, data=payload, headers=headers)
+    print(response.json())
 
 
 if __name__ == "__main__":
