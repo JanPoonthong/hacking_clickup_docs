@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 
 import glob
-import shutil
 import os
 import requests
+import shutil
 import sqlite3
 import textwrap
 from pathlib import Path
-from reportlab.pdfgen import canvas
 
 import config
+from reportlab.pdfgen import canvas
 
 headers = {
     "Authorization": f"Bearer {config.auth_token}",
