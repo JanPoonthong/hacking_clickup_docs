@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import glob
+import shutil
 import os
 import requests
 import sqlite3
@@ -36,8 +37,11 @@ def get_docs():
     return response
 
 
+docs_data = get_docs()
+
+
 def create_folder():
-    for i in get_docs().json()["views"]:
+    for i in docs_data.json()["views"]:
         try:
             os.mkdir(f"{i['name']}")
             print("Created ", f"{i['name']}")
@@ -80,7 +84,7 @@ def draw_wrapped_line(canvas, text, length, x_pos, y_pos, y_offset):
 
 def create_pdf():
     delete_db()
-    for i in get_docs().json()["views"]:
+    for i in docs_data.json()["views"]:
         os.chdir(i["name"])
         for j in i["pages"]:
             save_docs_db(j["name"], j["text_content"])
@@ -111,10 +115,35 @@ def save_zoho_drive():
         print(response.json())
 
 
+def delete_docs_not_in_clickup():
+    dirs = []
+    for name in os.listdir("."):
+        if name.startswith(".") or name == "reportlab":
+            continue
+        elif os.path.isdir(name):
+            dirs.append(name)
+    docs_name = []
+    for i in docs_data.json()["views"]:
+        docs_name.append(i["name"])
+
+    set_list_dirs = set(dirs)
+    set_list_docs_name = set(docs_name)
+    docs_dif = (set_list_dirs - set_list_docs_name).union(
+        set_list_docs_name - set_list_docs_name
+    )
+
+    for i in docs_dif:
+        try:
+            shutil.rmtree(f"{i}")
+        except OSError as e:
+            print("Error: %s : %s" % (i, e.strerror))
+
+
 def main():
     create_folder()
     create_pdf()
-    save_zoho_drive()
+    # save_zoho_drive()
+    delete_docs_not_in_clickup()
     con.close()
 
 
