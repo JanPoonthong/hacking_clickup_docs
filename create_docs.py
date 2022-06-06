@@ -2,13 +2,15 @@
 
 import argparse
 import json
+import os
 import requests
 import sys
+from dotenv import load_dotenv
 
-import config
+load_dotenv(".env")
 
 headers = {
-    "Authorization": f"Bearer {config.auth_token}",
+    "Authorization": f"Bearer {os.environ.get('auth_token')}",
     "Content-Type": "application/json",
 }
 

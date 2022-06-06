@@ -6,23 +6,23 @@ import requests
 import shutil
 import sqlite3
 import textwrap
+from dotenv import load_dotenv
 from pathlib import Path
 
-import config
 from reportlab.pdfgen import canvas
 
+load_dotenv(".env")
+
 headers = {
-    "Authorization": f"Bearer {config.auth_token}",
+    "Authorization": f"Bearer {os.environ.get('auth_token')}",
     "Content-Type": "application/json",
 }
 
 con = sqlite3.connect("document.db")
 cur = con.cursor()
-
-try:
-    cur.execute("""CREATE TABLE docs (title text, description text)""")
-except sqlite3.OperationalError:
-    pass
+cur.execute(
+    """CREATE TABLE IF NOT EXISTS docs (title text, description text)"""
+)
 
 
 def get_docs():
@@ -101,7 +101,7 @@ def create_pdf():
 
 
 def zoho_token():
-    url = "https://accounts.zoho.com/oauth/v2/token?refresh_token={config.zoho_refresh_token}&client_secret={config.zoho_client_secret}&grant_type=refresh_token&client_id={config.zoho_client_id}"
+    url = "https://accounts.zoho.com/oauth/v2/token?refresh_token={os.environ.get('zoho_refresh_token')}&client_secret={os.environ.get('zoho_client_secret')}&grant_type=refresh_token&client_id={os.environ.get('zoho_client_id')}"
     access_token = requests.post(url)
     return access_token["access_token"]
 
@@ -110,7 +110,9 @@ def save_zoho_drive():
     url = "https://www.zohoapis.com/workdrive/api/v1/upload?parent_id=hltaja4afd79bedb04e93bcede5e7e897802f&override-name-exist=true"
     for path in Path("./").rglob("*.pdf"):
         files = {"content": open(f"{path}", "rb")}
-        headers = {"Authorization": f"Zoho-oauthtoken {config.file_zoho_token}"}
+        headers = {
+            "Authorization": f"Zoho-oauthtoken {os.environ.get('file_zoho_token')}"
+        }
         response = requests.post(url, files=files, headers=headers)
         print(response.json())
 
@@ -118,7 +120,7 @@ def save_zoho_drive():
 def delete_docs_not_in_clickup():
     dirs = []
     for name in os.listdir("."):
-        if name.startswith(".") or name == "reportlab":
+        if name == "reportlab":
             continue
         elif os.path.isdir(name):
             dirs.append(name)
@@ -133,8 +135,18 @@ def delete_docs_not_in_clickup():
     )
 
     for i in docs_dif:
+
+        # if i.startswith(".") or i in docs_name:
+        #     continue
+
+        # TODO(jan): Detect dot file and remove folder only from ClickUp
+        if i not in docs_name:
+            pass
+
         try:
-            shutil.rmtree(f"{i}")
+            pass
+            # print(i)
+            # shutil.rmtree(f"{i}")
         except OSError as e:
             print("Error: %s : %s" % (i, e.strerror))
 
