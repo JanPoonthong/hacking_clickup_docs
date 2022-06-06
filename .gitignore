@@ -1,5 +1,5 @@
 ENV/
-config.py
 note
 working_hours.txt
 document.db
+.env
