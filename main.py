@@ -61,15 +61,6 @@ def delete_db():
     cur.execute("DELETE FROM docs;")
 
 
-def check_duplicate():
-    cur.execute("SELECT * FROM docs")
-
-    rows = cur.fetchall()
-
-    for row in rows:
-        print(row)
-
-
 def draw_wrapped_line(surface, text, length, x_pos, y_pos, y_offset):
     if len(text) > length:
         wraps = textwrap.wrap(text, length)
@@ -141,7 +132,6 @@ def delete_docs_not_in_clickup():
 
     for i in docs_dif:
         try:
-            print(i)
             shutil.rmtree(f"{i}")
         except OSError as e:
             print("Error: %s : %s" % (i, e.strerror))
