@@ -70,15 +70,15 @@ def check_duplicate():
         print(row)
 
 
-def draw_wrapped_line(canvas, text, length, x_pos, y_pos, y_offset):
+def draw_wrapped_line(surface, text, length, x_pos, y_pos, y_offset):
     if len(text) > length:
         wraps = textwrap.wrap(text, length)
         for x in range(len(wraps)):
-            canvas.drawString(x_pos, y_pos, wraps[x])
+            surface.drawString(x_pos, y_pos, wraps[x])
             y_pos -= y_offset
         y_pos += y_offset
     else:
-        canvas.drawString(x_pos, y_pos, text)
+        surface.drawString(x_pos, y_pos, text)
     return y_pos
 
 
@@ -110,33 +110,46 @@ def save_zoho_drive():
     url = "https://www.zohoapis.com/workdrive/api/v1/upload?parent_id=hltaja4afd79bedb04e93bcede5e7e897802f&override-name-exist=true"
     for path in Path("./").rglob("*.pdf"):
         files = {"content": open(f"{path}", "rb")}
-        headers = {
+        headers_for_zoho = {
             "Authorization": f"Zoho-oauthtoken {os.environ.get('file_zoho_token')}"
         }
-        response = requests.post(url, files=files, headers=headers)
+        response = requests.post(url, files=files, headers=headers_for_zoho)
         print(response.json())
 
 
-def write_docs_in_file():
-    f = open("clickup_docs_2.txt", "w")
-    for i in docs_data.json()["views"]:
-        f.write(i["name"] + "\n")
+def read_docs_in_file():
+    dirs = []
+    f = open("clickup_docs.txt", "r")
+    for line in f:
+        line = line.replace("\n", "")
+        dirs.append(line)
     f.close()
+
+    return dirs
 
 
 def delete_docs_not_in_clickup():
-    try:
-        pass
-        # print(i)
-        # shutil.rmtree(f"{i}")
-    except OSError as e:
-        print("Error: %s : %s" % (i, e.strerror))
+    docs_name = []
+    for i in docs_data.json()["views"]:
+        docs_name.append(i["name"])
+
+    set_list_dirs = set(read_docs_in_file())
+    set_list_docs_name = set(docs_name)
+    docs_dif = (set_list_dirs - set_list_docs_name).union(
+        set_list_docs_name - set_list_docs_name
+    )
+
+    for i in docs_dif:
+        try:
+            print(i)
+            shutil.rmtree(f"{i}")
+        except OSError as e:
+            print("Error: %s : %s" % (i, e.strerror))
 
 
 def main():
     create_folder()
     create_pdf()
-    write_docs_in_file()
     delete_docs_not_in_clickup()
     # save_zoho_drive()
     con.close()

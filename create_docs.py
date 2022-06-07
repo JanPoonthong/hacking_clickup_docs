@@ -15,6 +15,25 @@ headers = {
 }
 
 
+def get_docs():
+    try:
+        response = requests.get(
+            "https://app.clickup.com/docs/v1/team/36742991/docs?include_archived=false&search=&page_search=&dir=desc&section=all",
+            headers=headers,
+        )
+    except requests.exceptions.HTTPError:
+        raise SystemExit("Bearer token expired")
+
+    return response
+
+
+def write_docs_in_file():
+    f = open("clickup_docs.txt", "w")
+    for i in get_docs().json()["views"]:
+        f.write(i["name"] + "\n")
+    f.close()
+
+
 def create_docs_clickup(title, description):
     url = "https://app.clickup.com/v1/view"
     raw_data = """{
@@ -112,7 +131,8 @@ def put_text_to_docs(title, description, view_id, id):
         }
     )
     response = requests.put(url, data=payload, headers=headers)
-    print(response.json())
+    write_docs_in_file()
+    print(response)
 
 
 if __name__ == "__main__":
