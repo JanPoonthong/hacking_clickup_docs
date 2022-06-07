@@ -117,45 +117,28 @@ def save_zoho_drive():
         print(response.json())
 
 
-def delete_docs_not_in_clickup():
-    dirs = []
-    for name in os.listdir("."):
-        if name == "reportlab":
-            continue
-        elif os.path.isdir(name):
-            dirs.append(name)
-    docs_name = []
+def write_docs_in_file():
+    f = open("clickup_docs_2.txt", "w")
     for i in docs_data.json()["views"]:
-        docs_name.append(i["name"])
+        f.write(i["name"] + "\n")
+    f.close()
 
-    set_list_dirs = set(dirs)
-    set_list_docs_name = set(docs_name)
-    docs_dif = (set_list_dirs - set_list_docs_name).union(
-        set_list_docs_name - set_list_docs_name
-    )
 
-    for i in docs_dif:
-
-        # if i.startswith(".") or i in docs_name:
-        #     continue
-
-        # TODO(jan): Detect dot file and remove folder only from ClickUp
-        if i not in docs_name:
-            pass
-
-        try:
-            pass
-            # print(i)
-            # shutil.rmtree(f"{i}")
-        except OSError as e:
-            print("Error: %s : %s" % (i, e.strerror))
+def delete_docs_not_in_clickup():
+    try:
+        pass
+        # print(i)
+        # shutil.rmtree(f"{i}")
+    except OSError as e:
+        print("Error: %s : %s" % (i, e.strerror))
 
 
 def main():
     create_folder()
     create_pdf()
-    # save_zoho_drive()
+    write_docs_in_file()
     delete_docs_not_in_clickup()
+    # save_zoho_drive()
     con.close()
 
 
