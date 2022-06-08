@@ -110,11 +110,13 @@ def save_zoho_drive():
 
 def read_docs_in_file():
     dirs = []
-    f = open("clickup_docs.txt", "r")
-    for line in f:
-        line = line.replace("\n", "")
-        dirs.append(line)
-    f.close()
+    file_exists = os.path.exists("clickup_docs.txt")
+    if file_exists:
+        f = open("clickup_docs.txt", "r+")
+        for line in f:
+            line = line.replace("\n", "")
+            dirs.append(line)
+        f.close()
 
     return dirs
 

@@ -14,6 +14,14 @@ Instructions:
 
         $ pip install requests
 
+## Create .env
+
+Instructions:
+
+1. Run:
+
+        $ touch .env
+        $
 ## Create doc in ClickUp
 
 Instructions:
