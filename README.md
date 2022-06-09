@@ -18,10 +18,10 @@ Instructions:
 
 Instructions:
 
-1. Run:
+1. Rename file `.env_sample` to `.env`
 
-        $ touch .env
-        $
+1. Follow: [OAuth2 Flow][clickup-api] to get `client_id`, `client_secret`, and `¡code`
+
 ## Create doc in ClickUp
 
 Instructions:
@@ -29,7 +29,6 @@ Instructions:
 1.  Run:
 
         $ python3 create_docs.py --title "Your Title" --description "Your Description"
-
 
 ## API for login in and can also get bearer authorization key
 
@@ -65,3 +64,4 @@ Instructions:
 
 [access_token]: https://jsapi.apiary.io/apis/clickup20/introduction/authentication/oauth2-flow.html
 [python-download]: https://www.python.org/downloads/
+[clickup-api]: https://clickup.com/api
